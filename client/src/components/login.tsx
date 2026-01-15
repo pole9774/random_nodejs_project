@@ -13,6 +13,7 @@ function Login(props: any) {
   const doLogin = function (username: string, password: string) {
     API.login(username, password)
       .then(() => {
+        props.setDirty(true);
         navigate("/");
       })
       .catch((err: any) => {

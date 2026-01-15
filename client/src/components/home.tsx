@@ -7,21 +7,21 @@ function Home(props: any) {
 
     const doLogOut = async () => {
         await API.logOut();
+        props.setDirty(true);
         navigate("/");
     };
 
     return (
         <>
-            {
-                props.loggedIn ? (
-                    <h1>Logged in as {props.user.name} {props.user.surname}</h1>
-                ) : (
-                    <h1>Not logged in</h1>
-                )
-            }
+            {props.loggedIn ?
+                <h1>Logged in as {props.user.name} {props.user.surname}</h1> :
+                <h1>Not logged in</h1>}
+
             <Button onClick={() => navigate("/documents")}>Go to Documents</Button>
-            <Button onClick={() => navigate("/login")}>Go to Login</Button>
-            {props.loggedIn && <Button onClick={doLogOut}>Log Out</Button>}
+
+            {props.loggedIn ?
+                <Button onClick={doLogOut}>Log Out</Button> :
+                <Button onClick={() => navigate("/login")}>Go to Login</Button>}
         </>
     );
 }
