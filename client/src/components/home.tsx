@@ -1,8 +1,14 @@
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import API from "../API/API";
 
 function Home(props: any) {
     const navigate = useNavigate();
+
+    const doLogOut = async () => {
+        await API.logOut();
+        navigate("/");
+    };
 
     return (
         <>
@@ -15,6 +21,7 @@ function Home(props: any) {
             }
             <Button onClick={() => navigate("/documents")}>Go to Documents</Button>
             <Button onClick={() => navigate("/login")}>Go to Login</Button>
+            {props.loggedIn && <Button onClick={doLogOut}>Log Out</Button>}
         </>
     );
 }
