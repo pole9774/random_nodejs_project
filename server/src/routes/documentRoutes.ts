@@ -1,13 +1,20 @@
 import express, { Router } from "express";
+import { body, param, query } from "express-validator";
 import DocumentController from "../controllers/documentController";
+import Authenticator from "./auth";
+import ErrorHandler from "../helper";
 
 class DocumentRoutes {
     private router: Router;
+    private errorHandler: ErrorHandler;
     private controller: DocumentController;
+    private authenticator: Authenticator;
 
-    constructor() {
+    constructor(authenticator: Authenticator) {
         this.router = express.Router();
+        this.errorHandler = new ErrorHandler();
         this.controller = new DocumentController();
+        this.authenticator = authenticator;
         this.initRoutes();
     }
 
@@ -23,7 +30,13 @@ class DocumentRoutes {
                 .catch((error: any) => next(error));
         });
 
-        this.router.post("/", (req: any, res: any, next: any) => {
+        this.router.post(
+            "/",
+            this.authenticator.isLoggedIn,
+            body("title").notEmpty().isString(),
+            body("description").notEmpty().isString(),
+            this.errorHandler.validateRequest,
+            (req: any, res: any, next: any) => {
             this.controller
                 .createDocument(
                     req.body.title,
