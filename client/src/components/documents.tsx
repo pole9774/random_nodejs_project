@@ -69,7 +69,7 @@ function Documents(props: any) {
         ))
       }
 
-      <Form onSubmit={handleSubmit}>
+      { props.loggedIn ? ( <Form onSubmit={handleSubmit}>
 
         <Form.Group controlId="title">
           <Form.Label>Title</Form.Label>
@@ -97,7 +97,7 @@ function Documents(props: any) {
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Create Document"}
         </Button>
-      </Form>
+      </Form> ) : ( <p>Please log in to create a document.</p> )}
 
       <Button onClick={() => navigate("/")}>Back to Home</Button>
     </>
