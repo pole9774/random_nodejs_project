@@ -4,7 +4,7 @@ import API from "../API/API";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-function Documents() {
+function Documents(props: any) {
 
   const [documents, setDocuments] = useState<Document[]>([]);
 
@@ -53,6 +53,14 @@ function Documents() {
   return (
     <>
       {
+        props.loggedIn ? (
+          <h1>Logged in as {props.user.name} {props.user.surname}</h1>
+        ) : (
+          <h1>Not logged in</h1>
+        )
+      }
+
+      {
         documents.map((document) => (
           <div key={document.id}>
             <h2>{document.id + " - " + document.title}</h2>
@@ -62,7 +70,7 @@ function Documents() {
       }
 
       <Form onSubmit={handleSubmit}>
-        
+
         <Form.Group controlId="title">
           <Form.Label>Title</Form.Label>
           <Form.Control
