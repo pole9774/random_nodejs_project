@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { showToast } from '../utilities/toast';
@@ -12,7 +12,7 @@ function Login(props: any) {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       await API.login(username, password);
       showToast.success('Login successful');
@@ -23,16 +23,14 @@ function Login(props: any) {
     }
   };
 
+  useEffect(() => {
+    if (props.loggedIn) {
+      navigate("/");
+    }
+  }, [props.loggedIn, navigate]);
+
   return (
     <>
-      {
-        props.loggedIn ? (
-          <h1>Logged in as {props.user.name} {props.user.surname}</h1>
-        ) : (
-          <h1>Not logged in</h1>
-        )
-      }
-
       <Form onSubmit={handleLogin}>
 
         <Form.Group controlId="username">
@@ -58,7 +56,6 @@ function Login(props: any) {
         </Form.Group>
 
         <Button type="submit">Login</Button>
-        <Button onClick={() => navigate("/")}>Back to Home</Button>
       </Form>
     </>
   );

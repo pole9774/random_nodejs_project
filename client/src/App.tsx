@@ -7,6 +7,7 @@ import API from "./API/API";
 import Home from "./components/home";
 import Login from "./components/login";
 import User from "./entities/user";
+import NavigationBar from "./components/NavigationBar";
 
 function App() {
   const [user, setUser] = useState<User | undefined>(undefined);
@@ -19,7 +20,7 @@ function App() {
       await API.logOut();
       setDirty(true);
       showToast.success('Logged out successfully');
-      navigate("/");
+      //navigate("/");
     } catch (error) {
       showToast.error('Failed to log out');
     }
@@ -42,6 +43,8 @@ function App() {
   return (
     <>
       <Toaster position="top-right" />
+
+      <NavigationBar user={user} loggedIn={loggedIn} doLogOut={doLogOut} />
 
       <Routes>
         <Route path="/" element={<Home user={user} loggedIn={loggedIn} setDirty={setDirty} doLogOut={doLogOut} />} />

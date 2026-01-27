@@ -55,14 +55,6 @@ function Documents(props: any) {
   return (
     <>
       {
-        props.loggedIn ? (
-          <h1>Logged in as {props.user.name} {props.user.surname}</h1>
-        ) : (
-          <h1>Not logged in</h1>
-        )
-      }
-
-      {
         documents.map((document) => (
           <div key={document.id}>
             <h2>{document.id + " - " + document.title}</h2>
@@ -100,8 +92,6 @@ function Documents(props: any) {
           {isSubmitting ? "Submitting..." : "Create Document"}
         </Button>
       </Form> ) : ( <p>Please log in to create a document.</p> )}
-
-      <Button onClick={() => navigate("/")}>Back to Home</Button>
     </>
   )
 }
