@@ -1,55 +1,25 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { showToast } from '../utilities/toast';
 import API from "../API/API";
 
 function Login(props: any) {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [message, setMessage] = useState<string>("");
 
   const navigate = useNavigate();
 
-  const doLogin = function (username: string, password: string) {
-    API.login(username, password)
-      .then(() => {
-        props.setDirty(true);
-        navigate("/");
-      })
-      .catch((err: any) => {
-        setMessage(
-          err.error
-            ? err.error
-            : err.message
-              ? err.message
-              : typeof err === "string"
-                ? err
-                : "An error occurred"
-        );
-      });
-  };
-
-  const handleSubmit = (event: any) => {
-    event.preventDefault();
-    setMessage("");
-
-    let valid = true;
-    let msg = "";
-
-    if (!username || username === "") {
-      valid = false;
-      msg += "Please insert a valid username\r\n";
-    }
-
-    if (!password || password === "") {
-      valid = false;
-      msg += "Please insert a valid password\r\n";
-    }
-
-    if (valid) {
-      doLogin(username, password);
-    } else {
-      setMessage(msg);
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      await API.login(username, password);
+      showToast.success('Login successful');
+      props.setDirty(true);
+      navigate('/');
+    } catch (error) {
+      showToast.error('Invalid username or password');
     }
   };
 
@@ -63,9 +33,7 @@ function Login(props: any) {
         )
       }
 
-      {message && <p>{message}</p>}
-
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleLogin}>
 
         <Form.Group controlId="username">
           <Form.Label>Username</Form.Label>

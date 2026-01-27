@@ -3,6 +3,7 @@ import Document from "../entities/document";
 import API from "../API/API";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { showToast } from '../utilities/toast';
 
 function Documents(props: any) {
 
@@ -10,10 +11,7 @@ function Documents(props: any) {
 
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
   const [dirty, setDirty] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -21,33 +19,37 @@ function Documents(props: any) {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
-    setErrorMessage(null);
-    setSuccessMessage(null);
 
     try {
       const response = await API.addDocument(new Document(0, title, description));
 
       if (response && response.ok) {
-        setSuccessMessage("Document created successfully!");
+        showToast.success("Document created successfully");
         setTitle("");
         setDescription("");
         setDirty(true);
       } else {
-        setErrorMessage("Failed to create the document. Please try again later.");
+        showToast.error("Failed to create the document");
       }
     } catch (error) {
-      console.error("Error creating document: ", error);
-      setErrorMessage("An error occurred. Please try again.");
+      showToast.error("Failed to create the document");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   useEffect(() => {
-    API.getDocuments().then((documents: any) => {
-      setDocuments(documents);
-      setDirty(false);
-    });
+    const loadDocuments = async () => {
+      try {
+        const documents = await API.getDocuments();
+        setDocuments(documents);
+        setDirty(false);
+      } catch (error) {
+        showToast.error('Failed to load documents');
+      }
+    };
+
+    loadDocuments();
   }, [dirty]);
 
   return (

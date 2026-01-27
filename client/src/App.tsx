@@ -1,5 +1,7 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useState, useEffect, use } from "react";
+import { Toaster } from 'react-hot-toast';
+import { showToast } from './utilities/toast';
 import Documents from "./components/documents";
 import API from "./API/API";
 import Home from "./components/home";
@@ -13,9 +15,14 @@ function App() {
   const navigate = useNavigate();
 
   const doLogOut = async () => {
-    await API.logOut();
-    setDirty(true);
-    navigate("/");
+    try {
+      await API.logOut();
+      setDirty(true);
+      showToast.success('Logged out successfully');
+      navigate("/");
+    } catch (error) {
+      showToast.error('Failed to log out');
+    }
   };
 
   useEffect(() => {
@@ -33,11 +40,15 @@ function App() {
   }, [dirty]);
 
   return (
-    <Routes>
-      <Route path="/" element={<Home user={user} loggedIn={loggedIn} setDirty={setDirty} doLogOut={doLogOut} />} />
-      <Route path="/login" element={<Login user={user} loggedIn={loggedIn} setDirty={setDirty} />} />
-      <Route path="/documents" element={<Documents user={user} loggedIn={loggedIn} />} />
-    </Routes>
+    <>
+      <Toaster position="top-right" />
+
+      <Routes>
+        <Route path="/" element={<Home user={user} loggedIn={loggedIn} setDirty={setDirty} doLogOut={doLogOut} />} />
+        <Route path="/login" element={<Login user={user} loggedIn={loggedIn} setDirty={setDirty} />} />
+        <Route path="/documents" element={<Documents user={user} loggedIn={loggedIn} />} />
+      </Routes>
+    </>
   )
 }
 
