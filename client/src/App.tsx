@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { useState, useEffect, use } from "react";
 import Documents from "./components/documents";
 import API from "./API/API";
@@ -10,6 +10,13 @@ function App() {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [loggedIn, setLoggedIn] = useState<Boolean>(false);
   const [dirty, setDirty] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const doLogOut = async () => {
+    await API.logOut();
+    setDirty(true);
+    navigate("/");
+  };
 
   useEffect(() => {
     API.getUserInfo()
@@ -27,7 +34,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Home user={user} loggedIn={loggedIn} setDirty={setDirty} />} />
+      <Route path="/" element={<Home user={user} loggedIn={loggedIn} setDirty={setDirty} doLogOut={doLogOut} />} />
       <Route path="/login" element={<Login user={user} loggedIn={loggedIn} setDirty={setDirty} />} />
       <Route path="/documents" element={<Documents user={user} loggedIn={loggedIn} />} />
     </Routes>
