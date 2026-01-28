@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Document from "../entities/document";
 import API from "../API/API";
 import { Button, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import { showToast } from '../utilities/toast';
 
 function Documents(props: any) {
@@ -13,8 +12,6 @@ function Documents(props: any) {
   const [description, setDescription] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [dirty, setDirty] = useState<boolean>(false);
-
-  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
