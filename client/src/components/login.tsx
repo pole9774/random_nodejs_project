@@ -33,7 +33,7 @@ function Login(props: any) {
   }, [props.loggedIn, navigate]);
 
   return (
-    <Container className="mt-5">
+    <Container className="my-5">
       <Row className="justify-content-center">
         <Col md={6} lg={4}>
           <Card className="shadow">
