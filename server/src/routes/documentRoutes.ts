@@ -23,12 +23,15 @@ class DocumentRoutes {
     }
 
     initRoutes() {
-        this.router.get("/", (req: any, res: any, next: any) => {
-            this.controller
-                .getDocuments()
-                .then((documents: any) => res.status(200).json(documents))
-                .catch((error: any) => next(error));
-        });
+        this.router.get(
+            "/",
+            this.errorHandler.validateRequest,
+            (req: any, res: any, next: any) => {
+                this.controller
+                    .getDocuments()
+                    .then((documents: any) => res.status(200).json(documents))
+                    .catch((error: any) => next(error));
+            });
 
         this.router.post(
             "/",
@@ -37,14 +40,32 @@ class DocumentRoutes {
             body("description").notEmpty().isString(),
             this.errorHandler.validateRequest,
             (req: any, res: any, next: any) => {
-            this.controller
-                .createDocument(
-                    req.body.title,
-                    req.body.description
-                )
-                .then((data: any) => res.status(201).json(data))
-                .catch((error: any) => next(error));
-        });
+                this.controller
+                    .createDocument(
+                        req.body.title,
+                        req.body.description
+                    )
+                    .then((data: any) => res.status(201).json(data))
+                    .catch((error: any) => next(error));
+            });
+
+        this.router.patch(
+            "/:documentId",
+            this.authenticator.isLoggedIn,
+            param("documentId").isInt({ min: 1 }),
+            body("title").optional().isString(),
+            body("description").optional().isString(),
+            this.errorHandler.validateRequest,
+            (req: any, res: any, next: any) => {
+                this.controller
+                    .updateDocument(
+                        parseInt(req.params.documentId),
+                        req.body.title,
+                        req.body.description
+                    )
+                    .then((data: any) => res.status(200).json(data))
+                    .catch((error: any) => next(error));
+            });
     }
 }
 
