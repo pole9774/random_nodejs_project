@@ -7,7 +7,8 @@ class DocumentDAO {
                 SELECT 
                     D.id,
                     D.title,
-                    D.description
+                    D.description,
+                    D.pos
                 FROM Document D
             `;
 
@@ -20,6 +21,7 @@ class DocumentDAO {
                     id: row.id,
                     title: row.title,
                     description: row.description,
+                    pos: row.pos
                 }));
 
                 resolve(documents);
@@ -31,8 +33,8 @@ class DocumentDAO {
         return new Promise<any>((resolve, reject) => {
             try {
                 const sql = `
-                    INSERT INTO Document (title, description)
-                    VALUES (?, ?)
+                    INSERT INTO Document (title, description, pos)
+                    VALUES (?, ?, COALESCE((SELECT MAX(pos) FROM Document), 0) + 1)
                 `;
                 db.run(sql, [title, description], function (err: Error | null) {
                     if (err) {

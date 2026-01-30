@@ -60,14 +60,14 @@ async function getDocuments() {
   }
 }
 
-async function addDocument(document: Document) {
+async function addDocument(title: string, description: string) {
   const response = await fetch(baseURL + "documents/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify(document),
+    body: JSON.stringify({ title, description }),
   });
   return response;
 }

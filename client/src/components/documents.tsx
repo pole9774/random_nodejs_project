@@ -22,7 +22,7 @@ function Documents(props: any) {
     setIsCreating(true);
 
     try {
-      const response = await API.addDocument(new Document(0, title, description));
+      const response = await API.addDocument(title, description);
 
       if (response && response.ok) {
         showToast.success("Document created successfully");
@@ -69,7 +69,8 @@ function Documents(props: any) {
     const loadDocuments = async () => {
       try {
         const documents = await API.getDocuments();
-        setDocuments(documents);
+        const sortedDocuments = documents.sort((a, b) => a.pos - b.pos);
+        setDocuments(sortedDocuments);
         setDirty(false);
       } catch (error) {
         showToast.error('Failed to load documents');
@@ -134,7 +135,7 @@ function Documents(props: any) {
                       <>
                         <Card.Title>{document.title}</Card.Title>
                         <Card.Subtitle className="mb-2 text-muted">
-                          Document ID: {document.id}
+                          Index: {document.pos}
                         </Card.Subtitle>
                         <Card.Text>{document.description}</Card.Text>
                         {props.loggedIn && (
