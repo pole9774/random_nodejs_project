@@ -72,12 +72,25 @@ async function addDocument(document: Document) {
   return response;
 }
 
+async function updateDocument(documentId: number, title?: string, description?: string) {
+  const response = await fetch(baseURL + `documents/${documentId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ title, description }),
+  });
+  return response;
+}
+
 const API = {
   login,
   logOut,
   getUserInfo,
   getDocuments,
   addDocument,
+  updateDocument
 };
 
 export default API;
