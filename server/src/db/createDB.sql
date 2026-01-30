@@ -11,4 +11,6 @@ CREATE TABLE Document (
 INSERT INTO Document (title, description, pos) VALUES
 ('Sample Document 1', 'This is the description for sample document One.', 1),
 ('Sample Document 2', 'This is the description for sample document Two.', 2),
-('Sample Document 3', 'This is the description for sample document Three.', 3);
+('Sample Document 3', 'This is the description for sample document Three.', 3),
+('Sample Document 4', 'This is the description for sample document Four.', 4),
+('Sample Document 5', 'This is the description for sample document Five.', 5);
