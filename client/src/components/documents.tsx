@@ -3,6 +3,9 @@ import Document from "../entities/document";
 import API from "../API/API";
 import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 import { showToast } from '../utilities/toast';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import SortableCard from './SortableCard'
 
 function Documents(props: any) {
 
@@ -65,6 +68,34 @@ function Documents(props: any) {
     }
   };
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    // If dropped outside the list or in the same position, do nothing
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    // Find the new position
+    const newIndex = documents.findIndex((doc) => doc.id === over.id);
+    const newPos = documents[newIndex].pos;
+
+    // Call the API to save the new position
+    try {
+      const response = await API.updateDocumentPosition(Number(active.id), newPos);
+
+      if (response && response.ok) {
+        showToast.success("Document position updated");
+      } else {
+        showToast.error("Failed to update document position");
+      }
+    } catch (error) {
+      showToast.error("Failed to update document position");
+    } finally {
+      setDirty(true);
+    }
+  };
+
   useEffect(() => {
     const loadDocuments = async () => {
       try {
@@ -87,72 +118,32 @@ function Documents(props: any) {
 
           <h1 className="mb-4">Documents</h1>
           <div className="mb-4">
-            {
-              documents.map((document) => (
-                <Card key={document.id} className="mb-3 shadow-sm">
-                  <Card.Body>
-                    {editingDocumentId === document.id ? (
-                      <>
-                        <Form.Group controlId={`edit-title-${document.id}`} className="mb-3">
-                          <Form.Label>Title</Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={editTitle}
-                            onChange={(e) => setEditTitle(e.target.value)}
-                            required
-                          />
-                        </Form.Group>
-
-                        <Form.Group controlId={`edit-description-${document.id}`} className="mb-3">
-                          <Form.Label>Description</Form.Label>
-                          <Form.Control
-                            as="textarea"
-                            rows={3}
-                            value={editDescription}
-                            onChange={(e) => setEditDescription(e.target.value)}
-                            required
-                          />
-                        </Form.Group>
-
-                        <Button
-                          variant="success"
-                          size="sm"
-                          className="me-2"
-                          onClick={() => handleSaveEdit(document.id)}
-                          disabled={isUpdating}
-                        >
-                          {isUpdating ? "Saving..." : "Save"}
-                        </Button>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => setEditingDocumentId(null)}
-                        >
-                          Cancel
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Card.Title>{document.title}</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">
-                          Index: {document.pos}
-                        </Card.Subtitle>
-                        <Card.Text>{document.description}</Card.Text>
-                        {props.loggedIn && (
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={() => handleEditClick(document)}
-                          >
-                            Edit
-                          </Button>
-                        )}
-                      </>
-                    )}
-                  </Card.Body>
-                </Card>
-              ))
-            }
+            <DndContext
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={documents.map((doc) => doc.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {documents.map((document) => (
+                  <SortableCard
+                    key={document.id}
+                    document={document}
+                    editingDocumentId={editingDocumentId}
+                    editTitle={editTitle}
+                    editDescription={editDescription}
+                    isUpdating={isUpdating}
+                    loggedIn={props.loggedIn}
+                    onEditClick={handleEditClick}
+                    onSaveEdit={handleSaveEdit}
+                    onCancelEdit={() => setEditingDocumentId(null)}
+                    setEditTitle={setEditTitle}
+                    setEditDescription={setEditDescription}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </div>
 
           {props.loggedIn ? (

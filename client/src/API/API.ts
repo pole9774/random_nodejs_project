@@ -84,13 +84,26 @@ async function updateDocument(documentId: number, title?: string, description?: 
   return response;
 }
 
+async function updateDocumentPosition(documentId: number, pos: number) {
+  const response = await fetch(baseURL + `documents/${documentId}/position`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ pos }),
+  });
+  return response;
+}
+
 const API = {
   login,
   logOut,
   getUserInfo,
   getDocuments,
   addDocument,
-  updateDocument
+  updateDocument,
+  updateDocumentPosition
 };
 
 export default API;
