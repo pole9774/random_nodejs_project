@@ -1,5 +1,5 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { Toaster } from 'react-hot-toast';
 import { showToast } from './utilities/toast';
 import Documents from "./components/documents";
@@ -42,7 +42,7 @@ function App() {
 
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
 
       <NavigationBar user={user} loggedIn={loggedIn} doLogOut={doLogOut} />
 
