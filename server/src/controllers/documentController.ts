@@ -18,6 +18,10 @@ class DocumentController {
   async updateDocument(id: number, title?: string, description?: string): Promise<any> {
     return this.documentDAO.updateDocument(id, title, description);
   }
+
+  async updateDocumentPosition(id: number, pos: number): Promise<any> {
+    return this.documentDAO.updateDocumentPosition(id, pos);
+  }
 }
 
 export default DocumentController;

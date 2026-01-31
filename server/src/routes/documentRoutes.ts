@@ -66,6 +66,22 @@ class DocumentRoutes {
                     .then((data: any) => res.status(200).json(data))
                     .catch((error: any) => next(error));
             });
+
+        this.router.patch(
+            "/:documentId/position",
+            this.authenticator.isLoggedIn,
+            param("documentId").isInt({ min: 1 }),
+            body("pos").isInt({ min: 1 }),
+            this.errorHandler.validateRequest,
+            (req: any, res: any, next: any) => {
+                this.controller
+                    .updateDocumentPosition(
+                        parseInt(req.params.documentId),
+                        req.body.pos
+                    )
+                    .then((data: any) => res.status(200).json(data))
+                    .catch((error: any) => next(error));
+            });
     }
 }
 

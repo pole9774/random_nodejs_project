@@ -43,7 +43,7 @@ class DocumentDAO {
                     resolve({ title, description });
                 });
             }
-            catch (error) {
+            catch (error: any) {
                 reject(error);
             }
         });
@@ -88,9 +88,55 @@ class DocumentDAO {
 
                     resolve({ id, title, description });
                 });
-            } catch (error) {
+            } catch (error: any) {
                 reject(error);
             }
+        });
+    }
+
+    async updateDocumentPosition(id: number, pos: number): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            const get_sql = `
+                SELECT 
+                    (SELECT pos FROM Document WHERE id = ?) as current_pos,
+                    (SELECT MAX(pos) FROM Document) as max_pos
+            `;
+
+            db.get(get_sql, [id], (err: Error | null, row: any) => {
+                if (err) return reject(err);
+                if (!row || row.current_pos == null) {
+                    return reject(new Error("Document not found"));
+                }
+
+                const old_pos = row.current_pos;
+                const max_pos = row.max_pos;
+                const new_pos = Math.max(1, Math.min(pos, max_pos));
+
+                if (new_pos === old_pos) {
+                    return resolve({ id, old_pos, new_pos });
+                }
+
+                db.serialize(() => {
+                    db.run("BEGIN TRANSACTION");
+
+                    if (new_pos < old_pos) {
+                        db.run(`UPDATE Document SET pos = pos + 1 WHERE pos >= ? AND pos < ?`,
+                            [new_pos, old_pos]);
+                    } else {
+                        db.run(`UPDATE Document SET pos = pos - 1 WHERE pos > ? AND pos <= ?`,
+                            [old_pos, new_pos]);
+                    }
+
+                    db.run(`UPDATE Document SET pos = ? WHERE id = ?`, [new_pos, id]);
+
+                    db.run("COMMIT", (err: Error | null) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        resolve({ id, old_pos, new_pos });
+                    });
+                });
+            });
         });
     }
 }
