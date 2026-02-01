@@ -32,7 +32,6 @@ function SortableCard(props: SortableCardProps) {
         setEditDescription,
     } = props;
 
-    // This hook gives us drag-and-drop powers!
     const {
         attributes,
         listeners,
@@ -42,7 +41,6 @@ function SortableCard(props: SortableCardProps) {
         isDragging,
     } = useSortable({ id: document.id });
 
-    // Apply smooth animations when dragging
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
@@ -57,7 +55,6 @@ function SortableCard(props: SortableCardProps) {
         >
             <Card.Body>
                 {editingDocumentId === document.id ? (
-                    // EDITING MODE
                     <>
                         <Form.Group controlId={`edit-title-${document.id}`} className="mb-3">
                             <Form.Label>Title</Form.Label>
@@ -98,7 +95,6 @@ function SortableCard(props: SortableCardProps) {
                         </Button>
                     </>
                 ) : (
-                    // VIEW MODE - Now with drag handle
                     <>
                         <div className="d-flex justify-content-between align-items-start">
                             <div className="flex-grow-1">
@@ -109,7 +105,6 @@ function SortableCard(props: SortableCardProps) {
                                 <Card.Text>{document.description}</Card.Text>
                             </div>
 
-                            {/* DRAG HANDLE - Only show when logged in */}
                             {loggedIn && (
                                 <div
                                     {...attributes}

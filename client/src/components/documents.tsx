@@ -71,16 +71,13 @@ function Documents(props: any) {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
-    // If dropped outside the list or in the same position, do nothing
     if (!over || active.id === over.id) {
       return;
     }
 
-    // Find the new position
     const newIndex = documents.findIndex((doc) => doc.id === over.id);
     const newPos = documents[newIndex].pos;
 
-    // Call the API to save the new position
     try {
       const response = await API.updateDocumentPosition(Number(active.id), newPos);
 

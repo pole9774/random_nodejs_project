@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Toaster } from 'react-hot-toast';
 import { showToast } from './utilities/toast';
@@ -13,14 +13,12 @@ function App() {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [loggedIn, setLoggedIn] = useState<Boolean>(false);
   const [dirty, setDirty] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   const doLogOut = async () => {
     try {
       await API.logOut();
       setDirty(true);
       showToast.success('Logged out successfully');
-      //navigate("/");
     } catch (error) {
       showToast.error('Failed to log out');
     }
